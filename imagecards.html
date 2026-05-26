@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #holder{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .card{
+            width: 125px;
+            height: 125px;
+            border: 1px dashed turquoise;
+            background-color: rgb(101, 159, 159);
+        }
+        .card img{
+            width: 100%;
+            height: 75px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <h2>Image Cards</h2>
+    <div id="holder">
+       
+    </div>
+    <script>
+        let images = [
+            {URL : "./dark knight.png",title : "One"},
+            {URL : "./dark knight.png",title : "Two"},
+            {URL : "./dark knight.png",title : "Three"},
+            {URL : "./dark knight.png",title : "Four"},
+            {URL : "./dark knight.png",title : "Five"},
+            {URL : "./dark knight.png",title : "Six"},
+            {URL : "./dark knight.png",title : "Seven"},
+        ];
+        let holder = document.getElementById("holder");
+        let i = 0;
+        while(i < images.length){
+            let card = document.createElement("div");
+            card.classList.add("card");
+            let img = document.createElement("img");
+            img.src = images[i].URL;
+            
+            let title = document.createElement("h3");
+            title.textContent = images[i].title;
+            img.alt = images[i].title;
+            card.appendChild(img);
+            card.appendChild(title);
+            holder.appendChild(card);
+            i++;
+
+
+        }
+    </script>
+</body>
+</html>

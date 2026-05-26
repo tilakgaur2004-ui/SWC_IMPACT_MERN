@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p{
+            background-color: aquamarine;
+        }
+    </style>
+</head>
+<body>
+    <h2> This is a Greeting Message</h2>
+    <p id="msg"></p>
+    <script>
+        const time = new Date().getHours();
+        let greet;
+        if(time < 10){
+            greet = "Good Morning";
+        } else if(time < 20){
+            greet = "Good Day";
+        } else {
+            greet = "Good Evening";
+        }
+        document.getElementById("msg").innerHTML = greet;
+    </script>
+    
+</body>
+
+</html>

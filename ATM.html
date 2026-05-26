@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2>ATM MACHINE</h2>
+    <p id="atm"></p>
+    <script>
+        let balance = 5000;
+        let choice = Number(prompt(
+            `Enter Yoour Choice :
+            1. Check balance
+            2. Deposit Money
+            3. Withdraw Money
+            4. Mini Statement
+            5. Exit`
+        ));
+        let output;
+    switch(choice){
+        case 1:
+            alert(`Your balance is Rs.${balance}`);
+            break;
+        
+        case 2:
+            let deposit = Number(prompt("Enter Deposit Amount:"));
+            balance += deposit;
+            alert(`Rs ${deposit} Deposited successfully into Your Account
+            Updated Balance: Rs${balance}`);
+            break;
+
+        case 3:
+            let withdraw = Number(prompt("Enter Withdraw Amount"));
+            if(withdraw > balance){
+                alert("Insufficient Funds");
+            } else {
+                balance -= withdraw;
+                alert(`Rs ${withdraw} withdrawn successfully
+                Remaining Balance : Rs ${balance}`);
+            }
+            break;
+
+        case 4:
+            alert(`Mini Statement
+            Current Balance : Rs.${balance}`);
+            break;
+
+        case 5: 
+        alert("Thank You Visit Again");
+        break;
+
+        default:
+            alert("Invalid Choice");
+    }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FACTORIAL</title>
+</head>
+<body>
+    <script>
+        let input = Number(prompt("Enter the number"));
+        function factorial(n){
+            let result = 1n;
+            for(let i = 1n; i < n; i++){
+                result *= i;
+            }
+            return result;
+        }
+        console.log(factorial(input).toString());
+    </script>
+    
+</body>
+</html>

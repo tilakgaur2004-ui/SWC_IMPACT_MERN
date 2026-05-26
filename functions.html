@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let num = 10;
+
+        console.log(10/0);
+
+        console.log("hello"/2);
+        let s = num.toString();
+        console.log(typeof(s));
+
+        let num1 = 4.5678;
+        console.log(num1.toFixed(3));
+
+        console.log(num1.toPrecision(2));
+
+        console.log(num.valueOf());
+
+        console.log(Number("25"));
+
+        console.log(parseInt("100.45"));
+
+        console.log(parseFloat("100.46"));
+
+        console.log(Number.MAX_VALUE);
+
+        console.log(Number.MIN_VALUE);
+
+        console.log(Number.POSITIVE_INFINITY);
+
+        console.log(Number.NEGATIVE_INFINITY);
+
+        console.log(Number.NaN);
+
+        console.log(5 & 1);
+        console.log(5 | 1);
+        console.log(5 ^ 1);
+
+        let big = 999999999999999999n;
+        let big1 = 0n;
+        let big2 = 1n;
+        console.log(big + big2);
+
+        console.log(1n + BigInt(2));
+        console.log(Number(1n) + 2);
+
+     </script>
+</body>
+</html>

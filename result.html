@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p{
+            background-color: bisque;
+        }
+    </style>
+</head>
+<body>
+    <h2>Student Result</h2>
+    <p id="msg"></p>
+    <script>
+        let marks = prompt("Enter Your Marks:")
+        let result;
+        if(marks >= 35){
+            result = "Pass";
+        } else{
+            result = "Fail";
+        }
+        document.getElementById("msg").innerHTML = result;
+    </script>
+    
+</body>
+</html>

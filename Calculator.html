@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>BigInt Calculator</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #1a1a2e;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+  }
+
+  .calc {
+    background: #16213e;
+    border: 2px solid #0f3460;
+    border-radius: 12px;
+    width: 320px;
+    overflow: hidden;
+    box-shadow: 0 0 40px rgba(15,52,96,0.8);
+  }
+
+  .display {
+    background: #0a0a1a;
+    padding: 16px;
+    text-align: right;
+    min-height: 90px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 4px;
+  }
+
+  .expr { font-size: 12px; color: #555; min-height: 16px; }
+
+  .result {
+    font-size: 30px;
+    color: #e94560;
+    word-break: break-all;
+    max-height: 70px;
+    overflow-y: auto;
+  }
+
+  .result.error { font-size: 13px; color: #f66; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    border-top: 2px solid #0f3460;
+  }
+
+  button {
+    height: 58px;
+    border: none;
+    border-right: 1px solid #0f3460;
+    border-bottom: 1px solid #0f3460;
+    background: #16213e;
+    color: #ccc;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  button:hover  { background: #1e2d50; }
+  button:active { background: #0f3460; }
+
+  .op  { color: #f5a623; font-size: 18px; }
+  .fn  { color: #4ecdc4; font-size: 13px; }
+  .clr { color: #e94560; }
+  .eq  {
+    grid-column: span 2;
+    background: #e94560;
+    color: #fff;
+    font-size: 22px;
+    border-right: none;
+  }
+  .eq:hover  { background: #c73652; }
+  .span2 { grid-column: span 2; }
+</style>
+</head>
+<body>
+<div class="calc">
+  <div class="display">
+    <div class="expr" id="expr"></div>
+    <div class="result" id="result">0</div>
+  </div>
+  <div class="grid">
+    <button class="clr" onclick="cls()">CLR</button>
+    <button class="fn"  onclick="fn('fact')">n!</button>
+    <button class="fn"  onclick="fn('sqrt')">√</button>
+    <button class="op"  onclick="op('%')">MOD</button>
+
+    <button onclick="d('7')">7</button>
+    <button onclick="d('8')">8</button>
+    <button onclick="d('9')">9</button>
+    <button class="op" onclick="op('/')">÷</button>
+
+    <button onclick="d('4')">4</button>
+    <button onclick="d('5')">5</button>
+    <button onclick="d('6')">6</button>
+    <button class="op" onclick="op('*')">×</button>
+
+    <button onclick="d('1')">1</button>
+    <button onclick="d('2')">2</button>
+    <button onclick="d('3')">3</button>
+    <button class="op" onclick="op('-')">−</button>
+
+    <button class="span2" onclick="d('0')">0</button>
+    <button onclick="bsp()">⌫</button>
+    <button class="op" onclick="op('+')">+</button>
+
+    <button class="fn" onclick="op('^')">x^y</button>
+    <button class="fn" onclick="fn('neg')">±</button>
+    <button class="eq" onclick="eq()">=</button>
+  </div>
+</div>
+
+<script>
+const ops = {
+  '+': (a,b) => a + b,
+  '-': (a,b) => a - b,
+  '*': (a,b) => a * b,
+  '/': (a,b) => { if(!b) throw 'Div by zero'; return a/b; },
+  '%': (a,b) => { if(!b) throw 'Mod by zero'; return ((a%b)+b)%b; },
+  '^': (a,b) => { if(b<0n) throw 'Neg exponent'; return a**b; }
+};
+
+function factorial(n) {
+  if(n<0n) throw 'Negative input';
+  if(n>5000n) throw 'Too large';
+  let r=1n; for(let i=2n;i<=n;i++) r*=i; return r;
+}
+
+function isqrt(n) {
+  if(n<0n) throw 'Neg sqrt';
+  if(!n) return 0n;
+  let x=n, y=(x+1n)/2n;
+  while(y<x){x=y;y=(x+n/x)/2n;} return x;
+}
+
+let cur='0', op1=null, opr=null, fresh=false;
+
+function show(val, err) {
+  const el = document.getElementById('result');
+  const s = val.toString();
+  el.textContent = s.length>160 ? s.slice(0,160)+'… ('+s.length+' digits)' : s;
+  el.className = 'result' + (err?' error':'');
+}
+
+function d(n) {
+  cur = fresh ? n : (cur==='0' ? n : cur+n);
+  fresh = false;
+  show(BigInt(cur));
+}
+
+function op(o) {
+  try {
+    if(op1!==null && !fresh) {
+      const r = ops[opr](op1, BigInt(cur));
+      op1=r; cur=r.toString(); show(r);
+    } else { op1=BigInt(cur); }
+    opr=o; fresh=true;
+    document.getElementById('expr').textContent = cur + ' ' + o;
+  } catch(e) { show(e,true); op1=null; opr=null; }
+}
+
+function eq() {
+  if(!op1||!opr) return;
+  try {
+    const b=BigInt(cur), r=ops[opr](op1,b);
+    document.getElementById('expr').textContent = op1+' '+opr+' '+b+' =';
+    show(r); cur=r.toString(); op1=null; opr=null; fresh=true;
+  } catch(e) { show(e,true); op1=null; opr=null; }
+}
+
+function fn(f) {
+  try {
+    const n=BigInt(cur), r=f==='fact'?factorial(n):f==='sqrt'?isqrt(n):-n;
+    show(r); cur=r.toString(); fresh=true;
+  } catch(e) { show(e,true); }
+}
+
+function bsp() { if(!fresh){cur=cur.length>1?cur.slice(0,-1):'0'; show(BigInt(cur));} }
+function cls() { cur='0';op1=null;opr=null;fresh=false; show(0n); document.getElementById('expr').textContent=''; }
+
+document.addEventListener('keydown', e => {
+  if(e.key>='0'&&e.key<='9') d(e.key);
+  else if('+-*/%^'.includes(e.key)) op(e.key);
+  else if(e.key==='Enter') eq();
+  else if(e.key==='Backspace') bsp();
+  else if(e.key==='Escape') cls();
+});
+</script>
+</body>
+</html>

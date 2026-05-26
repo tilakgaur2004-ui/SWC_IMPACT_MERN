@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <pre>
+        Switch case : it is used for code block
+    </pre>
+    <p id="demo"></p>
+    <script>
+        let num;
+        let month = new Date().getMonth(); 
+        switch(month){
+            case 0:
+                num = "January";
+                break;
+            case 1:
+                num = "February";
+                break;
+            case 2:
+                num = "March";
+                break;
+            case 3:
+                num = "April";
+                break;
+            case 4:
+                num = "May";
+                break;
+            case 5:
+                num = "June";
+                break;
+            case 6:
+                num = "July";
+                break;
+            case 7:
+                num = "August";
+                break;
+            case 8:
+                num = "September";
+                break;
+            case 9:
+                num = "October";
+                break;
+            case 10:
+                num = "November";
+                break;
+            case 11:
+                num = "December";
+                break;
+            
+        } 
+        document.getElementById("demo").innerHTML = num; 
+    </script>
+    
+</body>
+</html>

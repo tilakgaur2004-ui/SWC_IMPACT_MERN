@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        p{
+            background-color: blueviolet;
+        }
+    </style>
+</head>
+<body>
+    <h2>Shopping bill Calculation</h2>
+    <p id="bill"></p>
+    <script>
+        let bill = Number(prompt("Enter bill Amount"));
+        let duscount = 0;
+        let amt;
+        if(bill >= 5000){
+            discount = 30;
+        } else if(bill >= 3000){
+            discount = 20;
+        } else if(bill >= 1000){
+            discount = 10;
+        } else{
+            discount = 0;
+        }
+        amt = bill - (bill * discount/100);
+        document.getElementById("bill").innerHTML =
+        `
+        Original Bill : Rs. ${bill}<br>
+        Dsicount : ${discount}%<br>
+        Amount to be Paid : Rs. ${amt}
+        `;
+
+    </script>
+    
+</body>
+</html>
