@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Campus Utility Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --border: #2a2a3d;
+    --accent: #7c6af7;
+    --accent2: #f7c66a;
+    --accent3: #6af7b8;
+    --accent4: #f76a8a;
+    --text: #e8e8f0;
+    --text2: #8888aa;
+    --text3: #555570;
+    --radius: 14px;
+    --spacing: 20px;
+    --font-size: 15px;
+    --sidebar-w: 240px;
+    --shadow: 0 8px 32px rgba(0,0,0,0.4);
+  }
+  [data-theme="light"] {
+    --bg: #f0f0f8;
+    --surface: #ffffff;
+    --surface2: #e8e8f5;
+    --border: #d0d0e8;
+    --text: #1a1a2e;
+    --text2: #555580;
+    --text3: #aaaacc;
+    --shadow: 0 8px 32px rgba(100,100,180,0.12);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Outfit', sans-serif;
+    font-size: var(--font-size);
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+    overflow-x: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: var(--sidebar-w);
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    z-index: 100;
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1);
+    overflow-y: auto;
+  }
+  .sidebar-logo {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .sidebar-logo h1 {
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    line-height: 1.2;
+  }
+  .sidebar-logo span {
+    font-size: 11px;
+    color: var(--text3);
+    font-family: 'Space Mono', monospace;
+  }
+  nav { flex: 1; padding: 12px 0; }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 20px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: all 0.2s;
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text2);
+  }
+  .nav-item:hover { background: var(--surface2); color: var(--text); }
+  .nav-item.active { background: var(--surface2); border-left-color: var(--accent); color: var(--text); }
+  .nav-item .icon { font-size: 18px; width: 24px; text-align: center; }
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .theme-toggle {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    transition: all 0.2s;
+    flex: 1;
+  }
+  .theme-toggle:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  
+  #main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 28px;
+    min-height: 100vh;
+    transition: margin-left 0.3s;
+  }
+  .module { display: none; animation: fadeIn 0.35s ease; }
+  .module.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform: translateY(12px); } to { opacity:1; transform: none; } }
+
+  .page-header {
+    margin-bottom: 28px;
+  }
+  .page-header h2 {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  .page-header p { color: var(--text2); font-size: 13.5px; margin-top: 4px; }
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    padding: 3px 9px;
+    border-radius: 20px;
+    background: var(--accent);
+    color: #fff;
+    margin-left: 10px;
+    vertical-align: middle;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+ 
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 18px;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .card:hover { box-shadow: var(--shadow); transform: translateY(-1px); }
+  .card-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 16px;
+  }
+
+  
+  .input-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+  input, select, textarea {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 14px;
+    padding: 9px 13px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    min-width: 0;
+  }
+  input:focus, select:focus, textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,106,247,0.15);
+  }
+  input::placeholder { color: var(--text3); }
+
+  
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    transition: all 0.18s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #6555e0; transform: translateY(-1px); box-shadow: 0 4px 14px rgba(124,106,247,0.4); }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { background: var(--border); }
+  .btn-danger { background: rgba(247,106,138,0.15); color: var(--accent4); border: 1px solid rgba(247,106,138,0.3); }
+  .btn-danger:hover { background: var(--accent4); color: #fff; }
+  .btn-success { background: rgba(106,247,184,0.15); color: var(--accent3); border: 1px solid rgba(106,247,184,0.3); }
+  .btn-success:hover { background: var(--accent3); color: #0a0a0f; }
+  .btn-sm { padding: 5px 12px; font-size: 12px; }
+
+  
+  table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    border-bottom: 1px solid var(--border);
+  }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--border); }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: var(--surface2); }
+
+  
+  .stats-row { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+  .stat-chip {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 18px;
+    min-width: 120px;
+  }
+  .stat-chip .value { font-size: 24px; font-weight: 800; font-family: 'Space Mono', monospace; }
+  .stat-chip .label { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+ 
+  .status { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+  .status-present { background: rgba(106,247,184,0.15); color: var(--accent3); }
+  .status-absent  { background: rgba(247,106,138,0.15); color: var(--accent4); }
+  .status-late    { background: rgba(247,198,106,0.15); color: var(--accent2); }
+  .warning-box {
+    background: rgba(247,106,138,0.1);
+    border: 1px solid rgba(247,106,138,0.3);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--accent4);
+    font-size: 13px;
+    margin-top: 12px;
+    display: none;
+  }
+  .warning-box.show { display: block; }
+
+  
+  .progress-wrap { background: var(--surface2); border-radius: 99px; height: 8px; overflow: hidden; margin: 6px 0; }
+  .progress-bar { height: 100%; border-radius: 99px; transition: width 0.5s ease; background: var(--accent); }
+
+  
+  .strength-meter { height: 8px; background: var(--surface2); border-radius: 99px; margin: 12px 0; overflow: hidden; }
+  .strength-fill { height: 100%; border-radius: 99px; transition: width 0.4s, background 0.4s; width: 0; }
+  .strength-label { font-size: 13px; font-weight: 700; font-family: 'Space Mono', monospace; }
+  .strength-checks { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+  .check-chip {
+    font-size: 12px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text3);
+    transition: all 0.2s;
+  }
+  .check-chip.pass { background: rgba(106,247,184,0.12); border-color: rgba(106,247,184,0.3); color: var(--accent3); }
+
+  
+  .quiz-question { font-size: 18px; font-weight: 700; margin-bottom: 20px; line-height: 1.4; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 18px;
+    cursor: pointer;
+    font-size: 14px;
+    text-align: left;
+    transition: all 0.18s;
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+  }
+  .quiz-opt:hover { border-color: var(--accent); background: rgba(124,106,247,0.08); }
+  .quiz-opt.correct { background: rgba(106,247,184,0.15); border-color: var(--accent3); color: var(--accent3); }
+  .quiz-opt.wrong { background: rgba(247,106,138,0.15); border-color: var(--accent4); color: var(--accent4); }
+  .quiz-progress { font-size: 12px; color: var(--text3); font-family: 'Space Mono', monospace; margin-bottom: 8px; }
+  .quiz-nav { display: flex; gap: 10px; margin-top: 18px; align-items: center; }
+  .quiz-result { text-align: center; padding: 30px; }
+  .quiz-score { font-size: 64px; font-weight: 800; font-family: 'Space Mono', monospace; color: var(--accent); }
+
+ 
+  .conv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .conv-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+  }
+  .conv-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 8px; font-weight: 700; }
+  .conv-value { font-family: 'Space Mono', monospace; font-size: 20px; font-weight: 700; color: var(--accent2); word-break: break-all; }
+
+ 
+  .person-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 4px 12px; font-size: 13px;
+    margin: 3px;
+  }
+  .person-tag button { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 14px; line-height: 1; }
+  .person-tag button:hover { color: var(--accent4); }
+  .owe-item { padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+  .owe-item:last-child { border: none; }
+
+  .theme-controls { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
+  .ctrl-group label { font-size: 12px; color: var(--text3); display: block; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.07em; }
+  input[type="color"] { height: 40px; width: 100%; border-radius: 8px; cursor: pointer; padding: 2px 4px; }
+  input[type="range"] { width: 100%; }
+  .preview-card {
+    margin-top: 18px;
+    padding: 24px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+
+  #typing-para {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    font-size: 16px;
+    line-height: 1.8;
+    letter-spacing: 0.01em;
+    font-family: 'Space Mono', monospace;
+    min-height: 90px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  #typing-para .correct-char { color: var(--accent3); }
+  #typing-para .wrong-char { color: var(--accent4); background: rgba(247,106,138,0.15); border-radius: 2px; }
+  #typing-para .current-char { border-bottom: 2px solid var(--accent); }
+  #typing-input { width: 100%; font-size: 16px; font-family: 'Space Mono', monospace; min-height: 70px; resize: none; }
+
+  
+  #hamburger {
+    display: none;
+    position: fixed;
+    top: 14px; left: 14px;
+    z-index: 200;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 4px;
+  }
+  #hamburger span { display: block; width: 20px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.2s; }
+  #sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 90; }
+
+ 
+  .subject-row { display: flex; gap: 8px; align-items: center; margin-bottom: 8px; flex-wrap: wrap; }
+  .subject-row input, .subject-row select { flex: 1; min-width: 80px; }
+
+  
+  @media (max-width: 768px) {
+    #sidebar { transform: translateX(-100%); }
+    #sidebar.open { transform: none; }
+    #sidebar-overlay.show { display: block; }
+    #hamburger { display: flex; }
+    #main { margin-left: 0; padding: 16px; padding-top: 60px; }
+    .conv-grid { grid-template-columns: 1fr; }
+    .theme-controls { grid-template-columns: 1fr 1fr; }
+  }
+
+  
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+  .pulse { animation: pulse 1.5s infinite; }
+  @keyframes slideIn { from{transform:translateX(-10px);opacity:0} to{transform:none;opacity:1} }
+  .slide-in { animation: slideIn 0.2s ease; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .tag-accent  { color: var(--accent); }
+  .tag-accent2 { color: var(--accent2); }
+  .tag-accent3 { color: var(--accent3); }
+  .tag-accent4 { color: var(--accent4); }
+
+  select option { background: var(--surface); }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+
+<button id="hamburger" aria-label="Menu" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</button>
+<div id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+
+<nav id="sidebar">
+  <div class="sidebar-logo">
+    <h1>Campus<br>Utility Hub</h1>
+    <span>v2.0 · 8 modules</span>
+  </div>
+  <nav id="nav-list"></nav>
+  <div class="sidebar-footer">
+    <button class="theme-toggle" onclick="toggleTheme()">◐ Toggle Theme</button>
+  </div>
+</nav>
+
+
+<main id="main">
+
+  
+  <section class="module" id="mod-attendance">
+    <div class="page-header">
+      <h2>📋 Attendance Tracker <span class="badge">Module 1</span></h2>
+      <p>Track student attendance and monitor performance below 75%</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Add Student</div>
+      <div class="input-row">
+        <input id="att-name" type="text" placeholder="Student name" style="flex:1"/>
+        <button class="btn btn-primary" onclick="addStudent()">＋ Add</button>
+      </div>
+    </div>
+    <div class="stats-row" id="att-stats"></div>
+    <div class="card">
+      <div class="card-title">Student List</div>
+      <table id="att-table">
+        <thead><tr><th>#</th><th>Name</th><th>P</th><th>A</th><th>L</th><th>%</th><th>Status</th><th>Actions</th></tr></thead>
+        <tbody id="att-tbody"></tbody>
+      </table>
+    </div>
+    <div class="warning-box" id="att-warning">⚠️ Some students have attendance below 75% — they are at risk of being detained!</div>
+  </section>
+
+  
+  <section class="module" id="mod-cgpa">
+    <div class="page-header">
+      <h2>🎓 CGPA Calculator <span class="badge">Module 2</span></h2>
+      <p>Calculate your SGPA/CGPA by adding subjects dynamically</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Add Subject</div>
+      <div class="input-row">
+        <input id="cgpa-sub" type="text" placeholder="Subject name" style="flex:2"/>
+        <input id="cgpa-cred" type="number" placeholder="Credits" min="1" max="6" style="flex:1"/>
+        <select id="cgpa-grade" style="flex:1">
+          <option value="">Grade</option>
+          <option>O</option><option>A+</option><option>A</option>
+          <option>B+</option><option>B</option><option>C</option><option>F</option>
+        </select>
+        <button class="btn btn-primary" onclick="addSubject()">＋ Add</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Subjects</div>
+      <table id="cgpa-table">
+        <thead><tr><th>#</th><th>Subject</th><th>Credits</th><th>Grade</th><th>Points</th><th>Weighted</th><th></th></tr></thead>
+        <tbody id="cgpa-tbody"></tbody>
+      </table>
+    </div>
+    <div class="stats-row" id="cgpa-stats"></div>
+  </section>
+
+  
+  <section class="module" id="mod-converter">
+    <div class="page-header">
+      <h2>🔢 Number Converter <span class="badge">Module 3</span></h2>
+      <p>Binary ↔ Decimal ↔ Octal ↔ Hex — built without toString() or parseInt()</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">Binary → Decimal</div>
+        <input id="bin-in" type="text" placeholder="Enter binary (e.g. 1101)" style="width:100%;margin-bottom:10px"/>
+        <button class="btn btn-primary" onclick="convertBin()" style="width:100%">Convert</button>
+        <div class="conv-box" style="margin-top:12px">
+          <div class="conv-label">Decimal</div>
+          <div class="conv-value" id="bin-out">—</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title">Decimal → All</div>
+        <input id="dec-in" type="number" placeholder="Enter decimal" style="width:100%;margin-bottom:10px"/>
+        <button class="btn btn-primary" onclick="convertDec()" style="width:100%">Convert All</button>
+        <div class="conv-grid" style="margin-top:12px">
+          <div class="conv-box"><div class="conv-label">Binary</div><div class="conv-value" id="dec-bin">—</div></div>
+          <div class="conv-box"><div class="conv-label">Octal</div><div class="conv-value" id="dec-oct">—</div></div>
+          <div class="conv-box"><div class="conv-label">Hexadecimal</div><div class="conv-value" id="dec-hex">—</div></div>
+          <div class="conv-box"><div class="conv-label">Decimal (check)</div><div class="conv-value" id="dec-chk">—</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">How It Works — No toString() / parseInt()</div>
+      <p style="color:var(--text2);font-size:13px;font-family:'Space Mono',monospace;line-height:1.7">
+        Binary→Dec: multiply each bit by 2^position using a <strong>for loop</strong>.<br>
+        Dec→Binary: divide by 2, collect remainders using a <strong>while loop</strong>.<br>
+        Dec→Octal: divide by 8, collect remainders using a <strong>do-while loop</strong>.<br>
+        Dec→Hex: divide by 16, map 10–15 to A–F using a <strong>for loop</strong> over digit chars.
+      </p>
+    </div>
+  </section>
+
+  
+  <section class="module" id="mod-password">
+    <div class="page-header">
+      <h2>🔐 Password Strength Analyzer <span class="badge">Module 4</span></h2>
+      <p>Real-time password strength check with visual meter</p>
+    </div>
+    <div class="card">
+      <input id="pwd-input" type="text" placeholder="Type your password here…" style="width:100%;font-size:18px;font-family:'Space Mono',monospace;margin-bottom:14px" oninput="analyzePassword()"/>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span class="strength-label" id="pwd-label">—</span>
+        <span style="font-size:12px;color:var(--text3);font-family:'Space Mono',monospace" id="pwd-score">Score: 0/5</span>
+      </div>
+      <div class="strength-meter"><div class="strength-fill" id="pwd-meter"></div></div>
+      <div class="strength-checks" id="pwd-checks"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Generate Strong Password</div>
+      <button class="btn btn-primary" onclick="generatePassword()" style="margin-bottom:12px">🎲 Generate</button>
+      <div id="gen-pwd" style="font-family:'Space Mono',monospace;font-size:16px;padding:10px 14px;background:var(--surface2);border-radius:8px;letter-spacing:0.05em;display:none"></div>
+    </div>
+  </section>
+
+  
+  <section class="module" id="mod-quiz">
+    <div class="page-header">
+      <h2>🧠 Dynamic Quiz System <span class="badge">Module 5</span></h2>
+      <p>10-question quiz — questions loaded dynamically from arrays</p>
+    </div>
+    <div class="card" id="quiz-container"></div>
+  </section>
+
+  
+  <section class="module" id="mod-expense">
+    <div class="page-header">
+      <h2>💸 Expense Splitter <span class="badge">Module 6</span></h2>
+      <p>Split group expenses and calculate who owes whom</p>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-title">People</div>
+        <div class="input-row">
+          <input id="exp-person" type="text" placeholder="Person name" style="flex:1"/>
+          <button class="btn btn-primary" onclick="addPerson()">＋ Add</button>
+        </div>
+        <div id="people-tags"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Add Expense</div>
+        <input id="exp-desc" type="text" placeholder="Description" style="width:100%;margin-bottom:8px"/>
+        <div class="input-row">
+          <input id="exp-amount" type="number" placeholder="Amount (₹)" style="flex:1"/>
+          <select id="exp-payer" style="flex:1"><option value="">Paid by…</option></select>
+          <button class="btn btn-primary" onclick="addExpense()">＋ Add</button>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="exp-results" style="display:none">
+      <div class="card-title">Results</div>
+      <div id="exp-summary"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Expenses</div>
+      <table><thead><tr><th>Description</th><th>Amount</th><th>Paid By</th></tr></thead>
+      <tbody id="exp-tbody"></tbody></table>
+    </div>
+  </section>
+
+  <!-- 7. THEME GENERATOR -->
+  <section class="module" id="mod-theme">
+    <div class="page-header">
+      <h2>🎨 Theme Generator <span class="badge">Module 7</span></h2>
+      <p>Customize the entire website appearance dynamically</p>
+    </div>
+    <div class="card">
+      <div class="card-title">Controls</div>
+      <div class="theme-controls" id="theme-controls"></div>
+    </div>
+    <div class="card preview-card" id="theme-preview-card">
+      <div class="card-title">Preview Card</div>
+      <p style="margin-bottom:12px">This entire website updates as you adjust the controls above. Try changing colors, font sizes, and border radius!</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-secondary">Secondary</button>
+        <button class="btn btn-success">Success</button>
+        <button class="btn btn-danger">Danger</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Reset</div>
+      <button class="btn btn-danger" onclick="resetTheme()">↺ Reset to Default</button>
+    </div>
+  </section>
+
+ 
+  <section class="module" id="mod-typing">
+    <div class="page-header">
+      <h2>⌨️ Typing Speed Tester <span class="badge">Module 8</span></h2>
+      <p>Measure your WPM, accuracy, and mistakes — no external APIs</p>
+    </div>
+    <div class="stats-row" id="typing-stats">
+      <div class="stat-chip"><div class="value tag-accent" id="t-wpm">0</div><div class="label">WPM</div></div>
+      <div class="stat-chip"><div class="value tag-accent3" id="t-acc">100%</div><div class="label">Accuracy</div></div>
+      <div class="stat-chip"><div class="value tag-accent4" id="t-err">0</div><div class="label">Mistakes</div></div>
+      <div class="stat-chip"><div class="value tag-accent2" id="t-time">0s</div><div class="label">Time</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Paragraph to type</div>
+      <div id="typing-para"></div>
+      <textarea id="typing-input" placeholder="Start typing here to begin the test…" oninput="handleTyping()" rows="3"></textarea>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn btn-primary" onclick="startNewTest()">🔄 New Paragraph</button>
+        <button class="btn btn-secondary" onclick="resetTyping()">↺ Reset</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+
+const navItems = [
+  { id: 'attendance', icon: '📋', label: 'Attendance Tracker' },
+  { id: 'cgpa',       icon: '🎓', label: 'CGPA Calculator' },
+  { id: 'converter',  icon: '🔢', label: 'Number Converter' },
+  { id: 'password',   icon: '🔐', label: 'Password Strength' },
+  { id: 'quiz',       icon: '🧠', label: 'Quiz System' },
+  { id: 'expense',    icon: '💸', label: 'Expense Splitter' },
+  { id: 'theme',      icon: '🎨', label: 'Theme Generator' },
+  { id: 'typing',     icon: '⌨️',  label: 'Typing Speed Test' },
+];
+
+(function buildNav() {
+  const list = document.getElementById('nav-list');
+  for (let i = 0; i < navItems.length; i++) {
+    const item = navItems[i];
+    const div = document.createElement('div');
+    div.className = 'nav-item' + (i === 0 ? ' active' : '');
+    div.dataset.target = item.id;
+    div.innerHTML = `<span class="icon">${item.icon}</span>${item.label}`;
+    div.addEventListener('click', () => switchModule(item.id));
+    list.appendChild(div);
+  }
+})();
+
+function switchModule(id) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.target === id));
+  document.querySelectorAll('.module').forEach(m => m.classList.toggle('active', m.id === 'mod-' + id));
+  if (window.innerWidth < 768) toggleSidebar();
+}
+
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('sidebar-overlay').classList.toggle('show');
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+}
+
+
+switchModule('attendance');
+
+
+
+const students = [];
+
+function addStudent() {
+  const input = document.getElementById('att-name');
+  const name = input.value.trim();
+  if (!name) return shake(input);
+  if (students.find(s => s.name.toLowerCase() === name.toLowerCase())) {
+    alert('Student already exists!'); return;
+  }
+  students.push({ name, present: 0, absent: 0, late: 0 });
+  input.value = '';
+  renderAttendance();
+}
+
+function markAttendance(idx, type) {
+  students[idx][type]++;
+  renderAttendance();
+}
+
+function removeStudent(idx) {
+  students.splice(idx, 1);
+  renderAttendance();
+}
+
+function calcPct(s) {
+  const total = s.present + s.absent + s.late;
+  if (total === 0) return 0;
+  return Math.round(((s.present + s.late * 0.5) / total) * 100);
+}
+
+function renderAttendance() {
+  const tbody = document.getElementById('att-tbody');
+  tbody.innerHTML = '';
+  let totalPresent = 0, totalAbsent = 0, totalLate = 0, lowCount = 0;
+
+  for (let i = 0; i < students.length; i++) {
+    const s = students[i];
+    const pct = calcPct(s);
+    const low = pct < 75 && (s.present + s.absent + s.late) > 0;
+    if (low) lowCount++;
+    totalPresent += s.present;
+    totalAbsent += s.absent;
+    totalLate += s.late;
+
+    const tr = document.createElement('tr');
+    tr.className = 'slide-in';
+    tr.innerHTML = `
+      <td style="color:var(--text3);font-family:'Space Mono',monospace">${i+1}</td>
+      <td><strong>${s.name}</strong></td>
+      <td style="color:var(--accent3)">${s.present}</td>
+      <td style="color:var(--accent4)">${s.absent}</td>
+      <td style="color:var(--accent2)">${s.late}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="flex:1"><div class="progress-wrap"><div class="progress-bar" style="width:${pct}%;background:${pct>=75?'var(--accent3)':pct>=50?'var(--accent2)':'var(--accent4)'}"></div></div></div>
+          <span style="font-family:'Space Mono',monospace;font-size:12px;min-width:36px">${pct}%</span>
+        </div>
+      </td>
+      <td>${low ? '<span class="status status-absent">⚠ Risk</span>' : '<span class="status status-present">✓ Safe</span>'}</td>
+      <td>
+        <div style="display:flex;gap:5px">
+          <button class="btn btn-sm btn-success" onclick="markAttendance(${i},'present')">P</button>
+          <button class="btn btn-sm btn-danger" onclick="markAttendance(${i},'absent')">A</button>
+          <button class="btn btn-sm" style="background:rgba(247,198,106,0.15);color:var(--accent2);border:1px solid rgba(247,198,106,0.3)" onclick="markAttendance(${i},'late')">L</button>
+          <button class="btn btn-sm btn-danger" onclick="removeStudent(${i})">✕</button>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  }
+
+  const statsDiv = document.getElementById('att-stats');
+  statsDiv.innerHTML = '';
+  const chips = [
+    { value: students.length, label: 'Students', color: 'var(--accent)' },
+    { value: totalPresent, label: 'Present', color: 'var(--accent3)' },
+    { value: totalAbsent, label: 'Absent', color: 'var(--accent4)' },
+    { value: totalLate, label: 'Late', color: 'var(--accent2)' },
+    { value: lowCount, label: 'At Risk', color: 'var(--accent4)' },
+  ];
+  chips.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'stat-chip';
+    div.innerHTML = `<div class="value" style="color:${c.color}">${c.value}</div><div class="label">${c.label}</div>`;
+    statsDiv.appendChild(div);
+  });
+
+  const warn = document.getElementById('att-warning');
+  warn.classList.toggle('show', lowCount > 0);
+}
+
+
+
+const subjects = [];
+const gradeMap = { O:10, 'A+':9, A:8, 'B+':7, B:6, C:5, F:0 };
+
+function addSubject() {
+  const name  = document.getElementById('cgpa-sub').value.trim();
+  const cred  = parseFloat(document.getElementById('cgpa-cred').value);
+  const grade = document.getElementById('cgpa-grade').value;
+  if (!name || !cred || !grade) return alert('Fill all fields!');
+  subjects.push({ name, credits: cred, grade });
+  document.getElementById('cgpa-sub').value = '';
+  document.getElementById('cgpa-cred').value = '';
+  document.getElementById('cgpa-grade').value = '';
+  renderCGPA();
+}
+
+function removeSubject(i) { subjects.splice(i, 1); renderCGPA(); }
+
+function renderCGPA() {
+  const tbody = document.getElementById('cgpa-tbody');
+  tbody.innerHTML = '';
+  let totalCred = 0, totalWeighted = 0;
+
+  for (let i = 0; i < subjects.length; i++) {
+    const s = subjects[i];
+    const pts = gradeMap[s.grade];
+    const weighted = pts * s.credits;
+    totalCred += s.credits;
+    totalWeighted += weighted;
+    const tr = document.createElement('tr');
+    tr.className = 'slide-in';
+    tr.innerHTML = `
+      <td style="color:var(--text3)">${i+1}</td>
+      <td><strong>${s.name}</strong></td>
+      <td>${s.credits}</td>
+      <td><span style="font-weight:700;color:var(--accent2)">${s.grade}</span></td>
+      <td>${pts}</td>
+      <td>${weighted.toFixed(1)}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="removeSubject(${i})">✕</button></td>`;
+    tbody.appendChild(tr);
+  }
+
+  const sgpa = totalCred > 0 ? (totalWeighted / totalCred).toFixed(2) : '0.00';
+  const statsDiv = document.getElementById('cgpa-stats');
+  statsDiv.innerHTML = '';
+  const chips = [
+    { value: subjects.length, label: 'Subjects', color: 'var(--accent)' },
+    { value: totalCred, label: 'Total Credits', color: 'var(--accent2)' },
+    { value: sgpa, label: 'SGPA', color: 'var(--accent3)' },
+    { value: parseFloat(sgpa) >= 9 ? '🏆 Excellent' : parseFloat(sgpa) >= 7 ? '👍 Good' : '📚 Needs Work', label: 'Remark', color: 'var(--text)' },
+  ];
+  chips.forEach(c => {
+    const div = document.createElement('div');
+    div.className = 'stat-chip';
+    div.innerHTML = `<div class="value" style="color:${c.color};font-size:${c.value.toString().length>5?'16px':'24px'}">${c.value}</div><div class="label">${c.label}</div>`;
+    statsDiv.appendChild(div);
+  });
+}
+
+
+
+const hexChars = ['0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'];
+
+function binaryToDecimal(bin) {
+  let result = 0;
+  for (let i = 0; i < bin.length; i++) {
+    const bit = bin[i];
+    if (bit !== '0' && bit !== '1') return null;
+    result = result * 2 + (bit === '1' ? 1 : 0);
+  }
+  return result;
+}
+
+function decimalToBinary(dec) {
+  if (dec === 0) return '0';
+  let result = '';
+  let n = dec;
+  while (n > 0) {
+    result = (n % 2 === 0 ? '0' : '1') + result;
+    n = Math.floor(n / 2);
+  }
+  return result;
+}
+
+function decimalToOctal(dec) {
+  if (dec === 0) return '0';
+  let result = '';
+  let n = dec;
+  do {
+    result = (n % 8) + result;
+    n = Math.floor(n / 8);
+  } while (n > 0);
+  return result;
+}
+
+function decimalToHex(dec) {
+  if (dec === 0) return '0';
+  let result = '';
+  let n = dec;
+  for (; n > 0; n = Math.floor(n / 16)) {
+    result = hexChars[n % 16] + result;
+  }
+  return result;
+}
+
+function convertBin() {
+  const val = document.getElementById('bin-in').value.trim();
+  const res = binaryToDecimal(val);
+  document.getElementById('bin-out').textContent = res !== null ? res : 'Invalid binary!';
+}
+
+function convertDec() {
+  const val = parseInt(document.getElementById('dec-in').value, 10);
+  if (isNaN(val) || val < 0) { alert('Enter a valid positive decimal!'); return; }
+  document.getElementById('dec-bin').textContent = decimalToBinary(val);
+  document.getElementById('dec-oct').textContent = decimalToOctal(val);
+  document.getElementById('dec-hex').textContent = decimalToHex(val);
+  document.getElementById('dec-chk').textContent = val;
+}
+
+
+
+const pwdRules = [
+  { id: 'upper',   label: '🔠 Uppercase',      test: p => /[A-Z]/.test(p) },
+  { id: 'lower',   label: '🔡 Lowercase',      test: p => /[a-z]/.test(p) },
+  { id: 'number',  label: '🔢 Number',         test: p => /[0-9]/.test(p) },
+  { id: 'special', label: '💥 Special Char',   test: p => /[^A-Za-z0-9]/.test(p) },
+  { id: 'length',  label: '📏 Min 8 chars',    test: p => p.length >= 8 },
+];
+
+(function buildChecks() {
+  const container = document.getElementById('pwd-checks');
+  pwdRules.forEach(r => {
+    const span = document.createElement('span');
+    span.className = 'check-chip';
+    span.id = 'chk-' + r.id;
+    span.textContent = r.label;
+    container.appendChild(span);
+  });
+})();
+
+function analyzePassword() {
+  const pwd = document.getElementById('pwd-input').value;
+  let score = 0;
+  pwdRules.forEach(r => {
+    const pass = r.test(pwd);
+    if (pass) score++;
+    document.getElementById('chk-' + r.id).classList.toggle('pass', pass);
+  });
+  const meter = document.getElementById('pwd-meter');
+  const label = document.getElementById('pwd-label');
+  const scoreEl = document.getElementById('pwd-score');
+  const pct = (score / 5) * 100;
+  meter.style.width = pct + '%';
+  if (score <= 1) { meter.style.background = 'var(--accent4)'; label.style.color = 'var(--accent4)'; label.textContent = '💀 Very Weak'; }
+  else if (score === 2) { meter.style.background = 'var(--accent4)'; label.style.color = 'var(--accent4)'; label.textContent = '⚠ Weak'; }
+  else if (score === 3) { meter.style.background = 'var(--accent2)'; label.style.color = 'var(--accent2)'; label.textContent = '⚡ Medium'; }
+  else if (score === 4) { meter.style.background = 'var(--accent)';  label.style.color = 'var(--accent)';  label.textContent = '✅ Strong'; }
+  else                  { meter.style.background = 'var(--accent3)'; label.style.color = 'var(--accent3)'; label.textContent = '🏆 Very Strong'; }
+  scoreEl.textContent = `Score: ${score}/5`;
+}
+
+function generatePassword() {
+  const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=';
+  let pwd = '';
+  for (let i = 0; i < 16; i++) {
+    pwd += charset[Math.floor(Math.random() * charset.length)];
+  }
+  const el = document.getElementById('gen-pwd');
+  el.textContent = pwd;
+  el.style.display = 'block';
+  document.getElementById('pwd-input').value = pwd;
+  analyzePassword();
+}
+
+
+
+const quizQuestions = [
+  { q: 'What does HTML stand for?', opts: ['HyperText Markup Language','HighText Machine Language','HyperText Machine Language','HyperTransfer Markup Language'], ans: 0 },
+  { q: 'Which language runs in a web browser?', opts: ['Java','C','Python','JavaScript'], ans: 3 },
+  { q: 'What is the time complexity of Binary Search?', opts: ['O(n)','O(n²)','O(log n)','O(1)'], ans: 2 },
+  { q: 'What does CSS stand for?', opts: ['Computer Style Sheets','Cascading Style Sheets','Creative Style Syntax','Colorful Style Sheets'], ans: 1 },
+  { q: 'Which data structure uses LIFO?', opts: ['Queue','Array','Stack','Linked List'], ans: 2 },
+  { q: 'What is 2¹⁰ in decimal?', opts: ['512','1024','256','2048'], ans: 1 },
+  { q: 'Which HTTP method is used to retrieve data?', opts: ['POST','PUT','GET','DELETE'], ans: 2 },
+  { q: 'What is the decimal value of hexadecimal FF?', opts: ['256','15','255','127'], ans: 2 },
+  { q: 'What does SQL stand for?', opts: ['Structured Query Language','Simple Question Language','Styled Query Loop','System Query Language'], ans: 0 },
+  { q: 'Which sorting algorithm has the best average time complexity?', opts: ['Bubble Sort','Selection Sort','Insertion Sort','Quick Sort'], ans: 3 },
+];
+
+let quizCurrent = 0;
+const quizAnswers = [];
+let quizDone = false;
+
+function renderQuiz() {
+  const container = document.getElementById('quiz-container');
+  container.innerHTML = '';
+
+  if (quizDone) {
+    let correct = 0;
+    for (let i = 0; i < quizAnswers.length; i++) {
+      if (quizAnswers[i] === quizQuestions[i].ans) correct++;
+    }
+    const pct = Math.round((correct / quizQuestions.length) * 100);
+    const div = document.createElement('div');
+    div.className = 'quiz-result';
+    div.innerHTML = `
+      <div class="quiz-score">${correct}/${quizQuestions.length}</div>
+      <p style="font-size:18px;margin:10px 0;color:var(--text2)">${pct}% Correct</p>
+      <p style="font-size:24px;margin:8px 0">${pct>=80?'🏆 Excellent!':pct>=60?'👍 Good Job!':'📚 Keep Practicing!'}</p>
+      <button class="btn btn-primary" style="margin-top:20px" onclick="restartQuiz()">🔄 Try Again</button>`;
+    container.appendChild(div);
+    return;
+  }
+
+  const q = quizQuestions[quizCurrent];
+  const prog = document.createElement('div');
+  prog.className = 'quiz-progress';
+  prog.textContent = `Question ${quizCurrent + 1} of ${quizQuestions.length}`;
+  const progressWrap = document.createElement('div');
+  progressWrap.className = 'progress-wrap';
+  progressWrap.style.marginBottom = '18px';
+  const bar = document.createElement('div');
+  bar.className = 'progress-bar';
+  bar.style.width = ((quizCurrent / quizQuestions.length) * 100) + '%';
+  progressWrap.appendChild(bar);
+
+  const qEl = document.createElement('div');
+  qEl.className = 'quiz-question';
+  qEl.textContent = q.q;
+
+  const optsEl = document.createElement('div');
+  optsEl.className = 'quiz-options';
+  for (let i = 0; i < q.opts.length; i++) {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = `${String.fromCharCode(65+i)}. ${q.opts[i]}`;
+    if (quizAnswers[quizCurrent] !== undefined) {
+      if (i === q.ans) btn.classList.add('correct');
+      else if (i === quizAnswers[quizCurrent]) btn.classList.add('wrong');
+      btn.disabled = true;
+    }
+    btn.addEventListener('click', () => selectAnswer(i));
+    optsEl.appendChild(btn);
+  }
+
+  const nav = document.createElement('div');
+  nav.className = 'quiz-nav';
+  const prevBtn = document.createElement('button');
+  prevBtn.className = 'btn btn-secondary';
+  prevBtn.textContent = '← Prev';
+  prevBtn.disabled = quizCurrent === 0;
+  prevBtn.addEventListener('click', () => { quizCurrent--; renderQuiz(); });
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'btn btn-primary';
+  nextBtn.textContent = quizCurrent === quizQuestions.length - 1 ? '🏁 Finish' : 'Next →';
+  nextBtn.disabled = quizAnswers[quizCurrent] === undefined;
+  nextBtn.addEventListener('click', () => {
+    if (quizCurrent === quizQuestions.length - 1) { quizDone = true; }
+    else { quizCurrent++; }
+    renderQuiz();
+  });
+  const scoreLabel = document.createElement('span');
+  let correct = 0;
+  for (let i = 0; i < quizAnswers.length; i++) {
+    if (quizAnswers[i] === quizQuestions[i].ans) correct++;
+  }
+  scoreLabel.style.cssText = 'font-size:12px;color:var(--text3);font-family:Space Mono,monospace;margin-left:auto';
+  scoreLabel.textContent = `Score: ${correct}/${quizAnswers.filter(a=>a!==undefined).length}`;
+  nav.appendChild(prevBtn);
+  nav.appendChild(nextBtn);
+  nav.appendChild(scoreLabel);
+
+  container.appendChild(prog);
+  container.appendChild(progressWrap);
+  container.appendChild(qEl);
+  container.appendChild(optsEl);
+  container.appendChild(nav);
+}
+
+function selectAnswer(i) {
+  quizAnswers[quizCurrent] = i;
+  renderQuiz();
+}
+
+function restartQuiz() {
+  quizCurrent = 0;
+  quizAnswers.length = 0;
+  quizDone = false;
+  renderQuiz();
+}
+
+renderQuiz();
+
+
+
+const people = [];
+const expenses = [];
+
+function addPerson() {
+  const input = document.getElementById('exp-person');
+  const name = input.value.trim();
+  if (!name || people.includes(name)) return shake(input);
+  people.push(name);
+  input.value = '';
+  renderPeople();
+}
+
+function removePerson(idx) {
+  people.splice(idx, 1);
+  renderPeople();
+}
+
+function renderPeople() {
+  const container = document.getElementById('people-tags');
+  container.innerHTML = '';
+  const payer = document.getElementById('exp-payer');
+  payer.innerHTML = '<option value="">Paid by…</option>';
+  for (let i = 0; i < people.length; i++) {
+    const tag = document.createElement('span');
+    tag.className = 'person-tag slide-in';
+    tag.innerHTML = `${people[i]} <button onclick="removePerson(${i})">×</button>`;
+    container.appendChild(tag);
+    const opt = document.createElement('option');
+    opt.value = people[i];
+    opt.textContent = people[i];
+    payer.appendChild(opt);
+  }
+}
+
+function addExpense() {
+  const desc = document.getElementById('exp-desc').value.trim();
+  const amount = parseFloat(document.getElementById('exp-amount').value);
+  const payer = document.getElementById('exp-payer').value;
+  if (!desc || !amount || !payer) return alert('Fill all expense fields!');
+  expenses.push({ desc, amount, payer });
+  document.getElementById('exp-desc').value = '';
+  document.getElementById('exp-amount').value = '';
+  renderExpenses();
+}
+
+function renderExpenses() {
+  const tbody = document.getElementById('exp-tbody');
+  tbody.innerHTML = '';
+  let total = 0;
+  for (let i = 0; i < expenses.length; i++) {
+    total += expenses[i].amount;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${expenses[i].desc}</td><td style="font-family:'Space Mono',monospace">₹${expenses[i].amount.toFixed(2)}</td><td><span class="status status-present">${expenses[i].payer}</span></td>`;
+    tbody.appendChild(tr);
+  }
+  if (people.length < 2 || expenses.length === 0) return;
+
+  const perPerson = total / people.length;
+  const paid = {};
+  for (let i = 0; i < people.length; i++) paid[people[i]] = 0;
+  for (let i = 0; i < expenses.length; i++) paid[expenses[i].payer] += expenses[i].amount;
+
+  const balances = {};
+  for (let i = 0; i < people.length; i++) balances[people[i]] = paid[people[i]] - perPerson;
+
+  const results = document.getElementById('exp-results');
+  const summary = document.getElementById('exp-summary');
+  results.style.display = 'block';
+  let html = `<div class="stats-row">
+    <div class="stat-chip"><div class="value tag-accent">₹${total.toFixed(0)}</div><div class="label">Total</div></div>
+    <div class="stat-chip"><div class="value tag-accent2">₹${perPerson.toFixed(2)}</div><div class="label">Per Person</div></div>
+    <div class="stat-chip"><div class="value tag-accent3">${people.length}</div><div class="label">People</div></div>
+  </div><div class="card-title" style="margin-top:12px">Who Owes Whom</div>`;
+
+  for (let i = 0; i < people.length; i++) {
+    for (let j = i+1; j < people.length; j++) {
+      const bi = balances[people[i]], bj = balances[people[j]];
+      if (bi < -0.01) {
+        html += `<div class="owe-item">💸 <strong>${people[i]}</strong> owes <strong>${people[j]}</strong> <span style="color:var(--accent2);font-family:'Space Mono',monospace">₹${Math.abs(bi).toFixed(2)}</span></div>`;
+      } else if (bj < -0.01) {
+        html += `<div class="owe-item">💸 <strong>${people[j]}</strong> owes <strong>${people[i]}</strong> <span style="color:var(--accent2);font-family:'Space Mono',monospace">₹${Math.abs(bj).toFixed(2)}</span></div>`;
+      }
+    }
+  }
+  summary.innerHTML = html;
+}
+
+
+/* ═══════════════════════════════════════════════
+   MODULE 7 — THEME GENERATOR
+═══════════════════════════════════════════════ */
+const themeControls = [
+  { label: 'Background Color', type: 'color', var: '--bg', default: '#0a0a0f' },
+  { label: 'Surface Color', type: 'color', var: '--surface', default: '#13131a' },
+  { label: 'Accent Color', type: 'color', var: '--accent', default: '#7c6af7' },
+  { label: 'Font Size', type: 'range', var: '--font-size', default: 15, min: 12, max: 20, unit: 'px', display: (v) => v + 'px' },
+  { label: 'Card Radius', type: 'range', var: '--radius', default: 14, min: 0, max: 30, unit: 'px', display: (v) => v + 'px' },
+  { label: 'Spacing', type: 'range', var: '--spacing', default: 20, min: 10, max: 40, unit: 'px', display: (v) => v + 'px' },
+];
+
+(function buildThemeControls() {
+  const container = document.getElementById('theme-controls');
+  themeControls.forEach((ctrl, idx) => {
+    const group = document.createElement('div');
+    group.className = 'ctrl-group';
+    const label = document.createElement('label');
+    label.textContent = ctrl.label + (ctrl.type === 'range' ? ` — ` : '');
+    const valueSpan = document.createElement('span');
+    valueSpan.id = 'tv-' + idx;
+    valueSpan.style.color = 'var(--accent)';
+    if (ctrl.type === 'range') {
+      valueSpan.textContent = ctrl.display(ctrl.default);
+      label.appendChild(valueSpan);
+    }
+    const input = document.createElement('input');
+    input.type = ctrl.type;
+    input.value = ctrl.default;
+    if (ctrl.type === 'range') { input.min = ctrl.min; input.max = ctrl.max; }
+    input.addEventListener('input', () => {
+      const val = ctrl.type === 'range' ? input.value + ctrl.unit : input.value;
+      document.documentElement.style.setProperty(ctrl.var, val);
+      if (ctrl.type === 'range') valueSpan.textContent = ctrl.display(input.value);
+    });
+    group.appendChild(label);
+    group.appendChild(input);
+    container.appendChild(group);
+  });
+})();
+
+function resetTheme() {
+  themeControls.forEach((ctrl, idx) => {
+    const val = ctrl.type === 'range' ? ctrl.default + ctrl.unit : ctrl.default;
+    document.documentElement.style.setProperty(ctrl.var, val);
+    const inputEl = document.querySelector(`#theme-controls .ctrl-group:nth-child(${idx+1}) input`);
+    if (inputEl) inputEl.value = ctrl.default;
+    const span = document.getElementById('tv-' + idx);
+    if (span && ctrl.display) span.textContent = ctrl.display(ctrl.default);
+  });
+}
+
+
+/* ═══════════════════════════════════════════════
+   MODULE 8 — TYPING SPEED TEST
+═══════════════════════════════════════════════ */
+const typingParagraphs = [
+  'The quick brown fox jumps over the lazy dog near the riverbank where birds sing and flowers bloom in the warm sunlight of a peaceful afternoon.',
+  'Programming is the art of telling another human what one wants the computer to do and it requires patience logic and a curious mind to master.',
+  'Science and technology have revolutionized the way we live work and communicate transforming every aspect of human society over the last century.',
+  'Education is the most powerful weapon which you can use to change the world because knowledge opens doors and creates opportunities for everyone.',
+  'Success is not final failure is not fatal it is the courage to continue that counts and every step forward matters no matter how small.',
+];
+
+let typingTarget = '';
+let typingStartTime = null;
+let typingTimer = null;
+let typingElapsed = 0;
+
+function startNewTest() {
+  resetTyping();
+  const idx = Math.floor(Math.random() * typingParagraphs.length);
+  typingTarget = typingParagraphs[idx];
+  renderTypingPara('');
+  document.getElementById('typing-input').value = '';
+  document.getElementById('typing-input').focus();
+}
+
+function renderTypingPara(typed) {
+  const container = document.getElementById('typing-para');
+  container.innerHTML = '';
+  for (let i = 0; i < typingTarget.length; i++) {
+    const span = document.createElement('span');
+    if (i < typed.length) {
+      span.textContent = typingTarget[i];
+      span.className = typed[i] === typingTarget[i] ? 'correct-char' : 'wrong-char';
+    } else if (i === typed.length) {
+      span.textContent = typingTarget[i];
+      span.className = 'current-char';
+    } else {
+      span.textContent = typingTarget[i];
+    }
+    container.appendChild(span);
+  }
+}
+
+function handleTyping() {
+  const typed = document.getElementById('typing-input').value;
+  if (!typingStartTime && typed.length > 0) {
+    typingStartTime = Date.now();
+    typingTimer = setInterval(updateTypingStats, 200);
+  }
+  renderTypingPara(typed);
+  updateTypingStats();
+  if (typed.length >= typingTarget.length) {
+    clearInterval(typingTimer);
+    updateTypingStats();
+  }
+}
+
+function updateTypingStats() {
+  if (!typingStartTime) return;
+  const typed = document.getElementById('typing-input').value;
+  typingElapsed = (Date.now() - typingStartTime) / 1000;
+  const words = typed.trim().split(/\s+/).filter(Boolean).length;
+  const wpm = typingElapsed > 0 ? Math.round((words / typingElapsed) * 60) : 0;
+  let mistakes = 0;
+  for (let i = 0; i < Math.min(typed.length, typingTarget.length); i++) {
+    if (typed[i] !== typingTarget[i]) mistakes++;
+  }
+  const accuracy = typed.length > 0 ? Math.round(((typed.length - mistakes) / typed.length) * 100) : 100;
+  document.getElementById('t-wpm').textContent = wpm;
+  document.getElementById('t-acc').textContent = accuracy + '%';
+  document.getElementById('t-err').textContent = mistakes;
+  document.getElementById('t-time').textContent = Math.round(typingElapsed) + 's';
+}
+
+function resetTyping() {
+  clearInterval(typingTimer);
+  typingStartTime = null;
+  typingTimer = null;
+  typingElapsed = 0;
+  document.getElementById('t-wpm').textContent = '0';
+  document.getElementById('t-acc').textContent = '100%';
+  document.getElementById('t-err').textContent = '0';
+  document.getElementById('t-time').textContent = '0s';
+  document.getElementById('typing-input').value = '';
+  document.getElementById('typing-para').innerHTML = '<span style="color:var(--text3)">Click "New Paragraph" to start a test!</span>';
+}
+
+/* ═══════════════════════════════════════════════
+   UTILITIES
+═══════════════════════════════════════════════ */
+function shake(el) {
+  el.style.animation = 'none';
+  el.offsetHeight;
+  el.style.animation = 'shake 0.3s ease';
+}
+
+// Init typing paragraph
+startNewTest();
+
+// Keyboard: Enter to add in input rows
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && e.target.tagName === 'INPUT') {
+    const mod = document.querySelector('.module.active');
+    if (!mod) return;
+    if (mod.id === 'mod-attendance') addStudent();
+    else if (mod.id === 'mod-cgpa') addSubject();
+    else if (mod.id === 'mod-expense') {
+      if (e.target.id === 'exp-person') addPerson();
+      else addExpense();
+    }
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        let words = ["hello", "world", "javascript"];
+        let container = document.getElementById("container");
+        let i = 0;
+        while(i < words.length){
+            let word = words[i];
+            let rev_word = "";
+            let j = word.length - 1;
+            while(j >= 0){
+                rev_word = rev_word + word[j];
+                j--;
+            }
+            let div = document.createElement("div");
+            div.classList.add("child");
+            div.innerText = rev_word;
+            container.appendChild(div);
+            i++;
+        }
+    </script>
+</body>
+</html>

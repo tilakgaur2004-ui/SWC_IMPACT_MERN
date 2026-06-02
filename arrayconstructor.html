@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let numbers = new Array(1,2,3,4);
+
+        function greet(name){
+            console.log("Hello " + name);
+        }
+        function user(callback){
+            callback("Tilak");
+        }
+        user(greet);
+
+        let colors = ["Pink", "Yellow", "Green", "Blue"];
+        colors.forEach(function(color){
+            console.log(color);
+        });
+        let nums = [10,20,30,40];
+        nums.forEach(function(value, index){
+            console.log(index,value);
+        });
+        nums.forEach((value) => {
+            console.log(value);
+        });   
+    </script>
+</body>
+</html>

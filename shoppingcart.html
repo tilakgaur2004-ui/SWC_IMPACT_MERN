@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div id="container"></div>
+    <script>
+        const cart = {
+            itemName : "kuch bhi",
+            quantity : 5,
+            price : 500
+        };
+        cart.total = cart.quantity*cart.price;
+        document.getElementById("container").innerHTML = `
+        <h2> ${cart.itemName}</h2>
+        <p> Quantity : ${cart.quantity}</p>
+        <p> Price : ${cart.price}</p>
+        <P> Total : ${cart.total}</p>
+            `;
+    </script>
+</body>
+</html>

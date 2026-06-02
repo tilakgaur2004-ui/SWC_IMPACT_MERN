@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let nums = [10,20,30,40];
+        let double = nums.map(function(num){
+            return num*2;
+        });
+        console.log(double);
+
+        let even = nums.filter(num => num%2 == 0);
+        console.log(even);
+
+        let found = nums.find(function(num){
+            return num > 30;
+        });
+        console.log(found);
+
+        let index = nums.findIndex(num => num == 40);
+        console.log(index);
+
+        let result = nums.some(num => num%2 == 0);
+        console.log(result);
+
+        let result1 = nums.every(num => num%2 == 0);
+        console.log(result1);
+
+        let nums1 = [1,2,3,4,5];
+        let total1 = nums1.reduce(function(acc, curr){
+            return acc + curr;
+        }, 0);
+        console.log(total1);
+
+        let max = nums1.reduce((acc, curr)=>{
+            return curr > acc ? curr : acc;
+        });
+        console.log(max);
+
+        let employees = [
+            {name : "Anjali", salary: 40000},
+            {name : "Tina", salary: 70000},
+            {name : "Rahul", salary: 45000},
+        ];
+        function increase(employeeArray){
+            return employeeArray.map(function(employee){
+                return{
+                    name : employee.name,
+                    salary : employee.salary + (employee.salary*0.10)
+                };
+            });
+        }
+        function highest(employeeArray){
+            return employeeArray.filter(function(employee){
+                return employee.salary > 50000;
+            });
+        }
+        function total(employeeArray){
+            return employeeArray.reduce(function(total, employee){
+                return total + employee.salary;
+            }, 0);
+        }
+        let newEmployees = increase(employees);
+        console.log(newEmployees);
+        console.log(highest(newEmployees));
+        console.log(total(newEmployees));
+
+        let nums3 = [100,25,5];
+        console.log(nums3.sort());
+        nums3.sort((a,b) => a - b);
+        nums3.sort((a,b) => b - a);
+
+        let nums4 = [1,2,3,4,5,6,77,8,9];
+        nums4.splice(2, 3);
+        console.log(nums4);
+
+        nums4.splice(8, 0, 10);
+        console.log(nums4);
+        nums4.splice(4);
+    </script>
+</body>
+</html>

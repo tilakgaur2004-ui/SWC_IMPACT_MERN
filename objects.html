@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        const calculator = {
+            value : 0,
+            add(n){
+                this.value += n;
+                return this;
+            },
+            subtract(n){
+                this.value -= n;
+                return this;
+
+            },
+            log(){
+                console.log(this.value);
+            }
+        };
+        calculator.add(5).subtract(2).log();
+
+        const marks = {
+            english : 90,
+            maths : 75,
+            science : 80,
+            social : 85,
+            hindi : 90
+        };
+        console.log(Object.keys(marks));
+        console.log(Object.values(marks));
+        console.log(Object.entries(marks));
+
+        const twin = Object.assign({}, marks);
+        twin.science = 100;
+        console.log(marks);
+        console.log(twin);
+
+        const api_config = { api : "exampleabc.com"};
+        Object.freeze(api_config);
+        api_config.api = "examplexyz.com";
+        console.log(api_config);
+
+        const gadget = {
+            brand : "Apple",
+            model : "macbook"
+        };
+        for(let key in gadget){
+            console.log(`${key} : ${gadget[key]}`);
+        }
+        const employee = {
+            id : 101,
+            name : "John",
+            salary : 50000
+        };
+        const updated = {};
+        for(let [key, value] of Object.entries(employee)){
+            updated[key.toUpperCase()] = value;
+        }
+        console.log(updated);
+
+        const rectangle = {
+            width : 10,
+            height : 20,
+            get area(){
+                return this.width * this.height;
+            },
+            set dimensions([w, h]){
+                this.width = w;
+                this.height = h;
+            }
+        };
+        console.log(rectangle.area);
+        rectangle.dimensions = [5, 8];
+        console.log(rectangle.area);
+
+        const profile = {
+            id : 101,
+            username : "NIMS_admin",
+            email : "nims.edu.com"
+        };
+        const { id, username, email } = profile;
+        console.log(id);
+        console.log(username);
+        console.log(email);
+        
+        const { id : userId} = profile;
+        console.log(userId);
+        const {address = "Unkown"} = profile;
+        console.log(address);
+
+    </script>
+</body>
+</html>
